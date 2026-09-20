@@ -6,8 +6,9 @@ wuye:
   version: 3.9.2
   # 版权年份
   copyrightYear: 2026
-  # 文件路径，可通过 WUYE_PROFILE 环境变量覆盖
-  profile: ${WUYE_PROFILE:${user.dir}/data/uploadPath}
+  # 文件路径，可通过 WUYE_PROFILE 环境变量覆盖。
+  # 默认使用项目固定目录，避免服务从不同工作目录启动后出现图片分叉。
+  profile: ${WUYE_PROFILE:E:/property-repair-wuyebaoxiu/property-repair-wuye/data/uploadPath}
   # 获取ip地址开关
   addressEnabled: false
   # 验证码类型 math 数字计算 char 字符验证

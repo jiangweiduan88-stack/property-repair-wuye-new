@@ -2,6 +2,8 @@
 setlocal
 rem Start the backend Jar from the project root and write startup details to the service log.
 cd /d "%~dp0.."
+rem 固定上传目录，避免从不同工作目录启动时图片保存到不同位置。
+set "WUYE_PROFILE=%~dp0..\data\uploadPath"
 if not exist "logs" mkdir "logs"
 rem Run from a separate copy so Maven can rebuild the target Jar while the service is running.
 if not exist "wuye-admin\target\wuye-admin.jar" (
