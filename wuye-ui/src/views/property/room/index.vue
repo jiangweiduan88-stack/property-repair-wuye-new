@@ -6,7 +6,7 @@
       <el-form-item><el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button><el-button icon="Refresh" @click="resetQuery">重置</el-button><el-button type="primary" icon="Plus" @click="handleAdd" v-hasPermi="['property:room:add']">新增</el-button></el-form-item>
     </el-form>
     <el-table v-loading="loading" :data="list">
-      <el-table-column label="编号" prop="roomId" width="80"/><el-table-column label="楼栋" prop="buildingName"/><el-table-column label="单元" prop="unitNo"/><el-table-column label="房号" prop="roomNo"/><el-table-column label="业主" prop="ownerName"/><el-table-column label="电话" prop="ownerPhone"/>
+      <el-table-column label="编号" prop="roomId" width="80"/><el-table-column label="楼栋" prop="buildingName"/><el-table-column label="单元" prop="unitNo"><template #default="s">{{ formatUnitNo(s.row.unitNo) }}</template></el-table-column><el-table-column label="房号" prop="roomNo"/><el-table-column label="业主" prop="ownerName"/><el-table-column label="电话" prop="ownerPhone"/>
       <el-table-column label="操作" width="160"><template #default="s"><el-button link type="primary" @click="handleUpdate(s.row)" v-hasPermi="['property:room:edit']">修改</el-button><el-button link type="primary" @click="handleDelete(s.row)" v-hasPermi="['property:room:remove']">删除</el-button></template></el-table-column>
     </el-table>
     <pagination v-show="total>0" :total="total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" @pagination="getList"/>
@@ -58,6 +58,12 @@ export default {
   created() { this.getList(); this.loadBuildings() },
   methods: {
     getList() { this.loading = true; listRoom(this.queryParams).then(r => { this.list = r.rows; this.total = r.total; this.loading = false }) },
+    // 兼容历史数据中的“1”和“1单元”两种写法，只统一展示，不改动数据库原值。
+    formatUnitNo(unitNo) {
+      const value = unitNo == null ? '' : String(unitNo).trim()
+      if (!value) return '-'
+      return value.endsWith('单元') ? value : `${value}单元`
+    },
     // 新增房屋只允许选择正常楼栋，避免数据关联到已停用楼栋。
     loadBuildings() { listBuilding({ status: '0' }).then(r => { this.buildingOptions = r.rows || [] }) },
     reset() { this.form = { status: '0', loginAccount: '' } },

@@ -534,7 +534,9 @@ export default {
       })
     },
     formatRoom(room) {
-      const parts = [room.buildingName, room.unitNo, room.roomNo].filter(Boolean)
+      const unitNo = room.unitNo == null ? '' : String(room.unitNo).trim()
+      const unitText = unitNo && !unitNo.endsWith('单元') ? `${unitNo}单元` : unitNo
+      const parts = [room.buildingName, unitText, room.roomNo].filter(Boolean)
       return parts.join(' ') || `房屋${room.roomId}`
     },
     formatRepairUser(user) {

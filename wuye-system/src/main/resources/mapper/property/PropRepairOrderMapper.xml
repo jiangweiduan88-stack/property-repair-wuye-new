@@ -43,7 +43,16 @@
     -->
     <sql id="selectOrderVo">
         select o.order_id, o.order_no, o.owner_id, owner.nick_name owner_name, owner.phonenumber owner_phone,
-               o.room_id, concat(ifnull(b.building_name, ''), if(o.room_id is null, '', concat('-', r.unit_no, '-', r.room_no))) room_text,
+               o.room_id,
+               concat_ws('-',
+                   nullif(trim(ifnull(b.building_name, '')), ''),
+                   nullif(case
+                       when r.unit_no is null or trim(r.unit_no) = '' then ''
+                       when trim(r.unit_no) like '%单元' then trim(r.unit_no)
+                       else concat(trim(r.unit_no), '单元')
+                   end, ''),
+                   nullif(trim(ifnull(r.room_no, '')), '')
+               ) room_text,
                o.category_id, c.category_name, o.title, o.content, o.images, o.status, o.repair_user_id,
                repair.nick_name repair_user_name, o.reject_reason, o.finish_result, o.finish_images,
                o.accept_time, o.assign_time, o.start_time, o.finish_time, o.confirm_time,
